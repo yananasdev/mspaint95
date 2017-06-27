@@ -45,6 +45,7 @@
 			<h3>Storage</h3>
 			<input type="button" value="Save" class="btn btn-warning" id="save">
 			<input type="button" value="Load" class="btn btn-warning" id="load">
+			<input type="button" value="Clear" class="btn btn-warning" id="clearCache">
 		</div>
 	</div>
 	<script>
@@ -57,17 +58,31 @@
 		var ctx = canvas.getContext('2d');
 		var linesArray = [];
 
+		if (localStorage.getItem("savedCanvas") != null ) {
+			linesArray = JSON.parse(localStorage.savedCanvas);
+		}
+		else {
+			linesArray = [];
+		}
+
 		// INITIAL LAUNCH
 
 		createCanvas();
 
-		// EVENT HANDLERS
+		// BUTTON EVENT HANDLERS
 
 		document.getElementById('canvasUpdate').addEventListener('click', createCanvas);
 		document.getElementById('eraser').addEventListener('click', eraser);
 		document.getElementById('clear').addEventListener('click', createCanvas);
 		document.getElementById('save').addEventListener('click', save);
 		document.getElementById('load').addEventListener('click', load);
+		document.getElementById('load').addEventListener('click', function() {localStorage.clear();});
+
+		// DRAWING EVENT HANDLERS
+
+		canvas.addEventListener('mousedown', function() {mousedown(canvas, event);});
+		canvas.addEventListener('mousemove',function() {mousemove(canvas, event);});
+		canvas.addEventListener('mouseup',mouseup);
 
 		// CREATE CANVAS
 
@@ -84,20 +99,25 @@
 		// SAVE FUNCTION
 
 		function save() {
-			localStorage.setItem(canvas, JSON.stringify(linesArray));
+			localStorage.setItem("savedCanvas", JSON.stringify(linesArray));
+			console.log(localStorage.savedCanvas);
+			console.log("Saved canvas!");
 		}
 
 		// LOAD FUNCTION
 
 		function load() {
-			var lines = JSON.parse(localStorage.getItem(canvas));
-			lines.forEach(function (line) {
-				ctx.beginPath();
-				ctx.strokeStyle = line.color;
-				ctx.moveTo(line.x1, line.y1);
-				ctx.lineTo(line.x2, line.y2);
-				ctx.stroke();
-			});
+			if (localStorage.getItem("savedCanvas") != null) {
+				var lines = JSON.parse(localStorage.getItem("savedCanvas"));
+				for (var i = 0; i < lines.length; i++) {
+					ctx.fillStyle = linesArray[i].color;
+					ctx.fillRect (linesArray[i].x, linesArray[i].y, linesArray[i].width, linesArray[i].height);
+				}
+				console.log("Canvas loaded.");
+			}
+			else {
+				console.log("nothing in memory!");
+			}
 		}
 
 		// CHANGE SIZE
@@ -139,16 +159,6 @@
 			currentColor = value;
 		}
 
- 		// EVENT LISTENERS
-
- 		canvas.addEventListener('mousedown', function() {
- 			mousedown(canvas, event);
- 		});
- 		canvas.addEventListener('mousemove',function() {
- 			mousemove(canvas, event);
- 		});
- 		canvas.addEventListener('mouseup',mouseup);
-
 		// GET MOUSE POSITION
 
 		function getMousePos(canvas, evt) {
@@ -174,9 +184,22 @@
 				var currentPosition = getMousePos(canvas, evt);
 				ctx.fillStyle = currentColor;
 				ctx.fillRect ((currentPosition.x - currentSize/2), (currentPosition.y - currentSize/2), currentSize, currentSize);
-				linesArray.push(currentPosition.x);
+				store(currentPosition.x, currentPosition.y, currentSize, currentSize, currentColor);
 				console.log("X: " + currentPosition.x + " Y: "+ currentPosition.y);
 			}
+		}
+
+		// STORE DATE
+
+		function store(x, y, w, h, c) {
+			var line = {
+				"x": x,
+				"y": y,
+				"width": w,
+				"height": h,
+				"color": c
+			}
+			linesArray.push(line);
 		}
 
 		// ON MOUSE UP
@@ -225,16 +248,16 @@
 	}
 
 	.input-group {
-    margin-bottom: 10px;
-}
+		margin-bottom: 10px;
+	}
 
-.colorButtons .btn {
-    width: 48%;
-}
+	.colorButtons .btn {
+		width: 48%;
+	}
 
-.sizeButtons .btn {
-    width: 48%;
-}
+	.sizeButtons .btn {
+		width: 48%;
+	}
 	
 </style>
 </body>
