@@ -47,6 +47,7 @@
 			<input type="button" value="Load" class="btn btn-warning" id="load">
 			<input type="button" value="Clear" class="btn btn-warning" id="clearCache">
 		</div>
+		
 	</div>
 	<script>
 
@@ -58,7 +59,7 @@
 		var ctx = canvas.getContext('2d');
 		var linesArray = [];
 
-		if (localStorage.getItem("savedCanvas") != null ) {
+		if (localStorage.getItem("savedCanvas") !== null ) {
 			linesArray = JSON.parse(localStorage.savedCanvas);
 		}
 		else {
@@ -100,7 +101,6 @@
 
 		function save() {
 			localStorage.setItem("savedCanvas", JSON.stringify(linesArray));
-			console.log(localStorage.savedCanvas);
 			console.log("Saved canvas!");
 		}
 
