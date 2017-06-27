@@ -1,8 +1,49 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>MSPAINT95</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+
+	<script>
+		var canvas = document.createElement('canvas');
+
+		canvas.id = "canvas";
+		canvas.width = 400;
+		canvas.height = 400;
+		canvas.style.zIndex = 8;
+		canvas.style.position = "absolute";
+		canvas.style.border = "1px solid";
+
+
+		var body = document.getElementsByTagName("body")[0];
+		body.appendChild(canvas);
+
+		cursorLayer = document.getElementById("canvas");
+
+		console.log(cursorLayer);
+
+		function getMousePos(canvas, evt) {
+			var rect = canvas.getBoundingClientRect();
+			return {
+				x: evt.clientX - rect.left,
+				y: evt.clientY - rect.top
+			};
+		}
+		var context = canvas.getContext('2d');
+
+		canvas.addEventListener('mousemove', function(evt) {
+			var mousePos = getMousePos(canvas, evt);
+			console.log(mousePos);
+
+		}, false);
+	</script>
+
+</script>
+
+
+<style>
+	
+</style>
 </body>
