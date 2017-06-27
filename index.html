@@ -3,26 +3,153 @@
 <head>
 	<title>MSPAINT95</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 </head>
 <body>
+	<div id="sidebar">
+		<div class="colorButtons">
+			<h3>Colour</h3>
+			<input type="button" color="rgb(255,255,00)" class="color btn btn-primary" style="background-color: yellow;" >
+			<input type="button" style="background-color: green;" color="rgb(128,255,0)" class="color btn btn-primary" >
+			<input type="button" style="background-color: cyan;" color="rgb(0,255,255)" class="color btn btn-primary" >
+			<input type="button" style="background-color: blue;" color="rgb(0,0,255)" class="color btn btn-primary" >
+			<input type="button" style="background-color: purple;" color="rgb(255,0,255)" class="color btn btn-primary" >
+			<input type="button" style="background-color: black;" color="rgb(0,0,0)" class="color btn btn-primary" >
+			<button id="eraser" class="btn btn-default"><span class="glyphicon glyphicon-erase" aria-hidden="true"></span></button>
+			<button id="clear" class="btn btn-danger"> <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+		</div>
 
+		<div class="buttonSize">
+			<h3>Size</h3>
+			<input type="button" value="normal" size="5" class="size btn btn-info">
+			<input type="button" value="medium" size="10" class="size btn btn-info">
+			<input type="button" value="large" size="25" class="size btn btn-info">
+			<input type="button" value="extra large" size="50" class="size btn btn-info">
+		</div>
+
+
+		<div class="canvasSize">
+			<h3>Canvas</h3>
+			<div class="input-group">
+				<span class="input-group-addon">X</span>
+				<input type="number" id="sizeX" class="form-control" placeholder="sizeX" value="800" class="size">
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Y</span>
+				<input type="number" id="sizeY" class="form-control" placeholder="sizeY" value="800" class="size">
+			</div>
+			<input type="button" class="updateSize btn btn-success" value="Update" id="canvasUpdate">
+		</div>
+		<div class="Storage">
+			<h3>Storage</h3>
+			<input type="button" value="Save" class="btn btn-warning" id="save">
+			<input type="button" value="Load" class="btn btn-warning" id="load">
+		</div>
+	</div>
 	<script>
+
+		// SETTING ALL VARIABLES
+
+		var isMouseDown=false;
 		var canvas = document.createElement('canvas');
-
-		canvas.id = "canvas";
-		canvas.width = 400;
-		canvas.height = 400;
-		canvas.style.zIndex = 8;
-		canvas.style.position = "absolute";
-		canvas.style.border = "1px solid";
-
-
 		var body = document.getElementsByTagName("body")[0];
-		body.appendChild(canvas);
+		var ctx = canvas.getContext('2d');
+		var linesArray = [];
 
-		cursorLayer = document.getElementById("canvas");
+		// INITIAL LAUNCH
 
-		console.log(cursorLayer);
+		createCanvas();
+
+		// EVENT HANDLERS
+
+		document.getElementById('canvasUpdate').addEventListener('click', createCanvas);
+		document.getElementById('eraser').addEventListener('click', eraser);
+		document.getElementById('clear').addEventListener('click', createCanvas);
+		document.getElementById('save').addEventListener('click', save);
+		document.getElementById('load').addEventListener('click', load);
+
+		// CREATE CANVAS
+
+		function createCanvas() {
+			canvas.id = "canvas";
+			canvas.width = parseInt(document.getElementById("sizeX").value);
+			canvas.height = parseInt(document.getElementById("sizeY").value);
+			canvas.style.zIndex = 8;
+			canvas.style.position = "absolute";
+			canvas.style.border = "1px solid";
+			body.appendChild(canvas);
+		}
+
+		// SAVE FUNCTION
+
+		function save() {
+			localStorage.setItem(canvas, JSON.stringify(linesArray));
+		}
+
+		// LOAD FUNCTION
+
+		function load() {
+			var lines = JSON.parse(localStorage.getItem(canvas));
+			lines.forEach(function (line) {
+				ctx.beginPath();
+				ctx.strokeStyle = line.color;
+				ctx.moveTo(line.x1, line.y1);
+				ctx.lineTo(line.x2, line.y2);
+				ctx.stroke();
+			});
+		}
+
+		// CHANGE SIZE
+
+		var currentSize = 5;
+
+		buttons = document.getElementsByClassName("size");
+		for (var i = 0; i < buttons.length; i++) {
+			button = buttons[i];
+			button.addEventListener("click", function() {
+				changeSize(this.getAttribute("size"));
+			})
+		}
+
+		function changeSize(value) {
+			currentSize = value;
+		}
+
+		// ERASER HANDLING
+
+		function eraser() {
+			currentSize = 50;
+			currentColor = "rgb(255,255,255)"
+		}
+
+		// CHANGE COLOR
+
+		var currentColor = "rgb(200,20,100)";
+
+		buttons = document.getElementsByClassName("color");
+		for (var i = 0; i < buttons.length; i++) {
+			button = buttons[i];
+			button.addEventListener("click", function() {
+				changeColor(this.getAttribute("color"));
+			})
+		}
+
+		function changeColor(value) {
+			currentColor = value;
+		}
+
+ 		// EVENT LISTENERS
+
+ 		canvas.addEventListener('mousedown', function() {
+ 			mousedown(canvas, event);
+ 		});
+ 		canvas.addEventListener('mousemove',function() {
+ 			mousemove(canvas, event);
+ 		});
+ 		canvas.addEventListener('mouseup',mouseup);
+
+		// GET MOUSE POSITION
 
 		function getMousePos(canvas, evt) {
 			var rect = canvas.getBoundingClientRect();
@@ -31,19 +158,83 @@
 				y: evt.clientY - rect.top
 			};
 		}
-		var context = canvas.getContext('2d');
 
-		canvas.addEventListener('mousemove', function(evt) {
+		// ON MOUSE DOWN
+
+		function mousedown(canvas, evt) {
 			var mousePos = getMousePos(canvas, evt);
 			console.log(mousePos);
+			isMouseDown=true
+		}
 
-		}, false);
+		// ON MOUSE MOVE
+
+		function mousemove(canvas, evt) {
+			if(isMouseDown){
+				var currentPosition = getMousePos(canvas, evt);
+				ctx.fillStyle = currentColor;
+				ctx.fillRect ((currentPosition.x - currentSize/2), (currentPosition.y - currentSize/2), currentSize, currentSize);
+				linesArray.push(currentPosition.x);
+				console.log("X: " + currentPosition.x + " Y: "+ currentPosition.y);
+			}
+		}
+
+		// ON MOUSE UP
+
+		function mouseup() {
+			isMouseDown=false
+		}
+
 	</script>
 
 </script>
 
 
 <style>
+
+	.colorButtons {
+		display: block;
+		margin: 20px 0;
+	}
+
+	canvas {
+		cursor: pointer;
+	}
+
+	div#sidebar {
+		position: absolute;
+		left: 0;
+		width: 150px;
+		padding: 20px 20px;
+		top: 0;
+	}
+
+	canvas#canvas {
+		position: fixed;
+		left: 150px;
+		top: 45px;
+	}
+
+	.btn {
+		margin-bottom: 10px;
+		width: 100%;
+	}
+	input {
+		width: 100%;
+		margin-bottom: 10px;
+	}
+
+	.input-group {
+    margin-bottom: 10px;
+}
+
+.colorButtons .btn {
+    width: 48%;
+}
+
+.sizeButtons .btn {
+    width: 48%;
+}
 	
 </style>
 </body>
