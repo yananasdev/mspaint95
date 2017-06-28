@@ -63,6 +63,7 @@
 		var linesArray = [];
 		currentSize = 5;
 		var currentColor = "rgb(200,20,100)";
+		var currentBg = "white";
 
 		// INITIAL LAUNCH
 
@@ -77,6 +78,8 @@
 		document.getElementById('bgcolorpicker').addEventListener('change', function() {
 			ctx.fillStyle = this.value;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			redraw();
+			currentBg = ctx.fillStyle;
 		});
 		document.getElementById('controlSize').addEventListener('change', function() {
 			currentSize = this.value;
@@ -95,6 +98,20 @@
 			console.log("Cache cleared!");
 		});
 
+		// REDRAW 
+
+		function redraw() {
+				for (var i = 1; i < linesArray.length; i++) {
+					ctx.beginPath();
+					ctx.moveTo(linesArray[i-1].x, linesArray[i-1].y);
+					ctx.lineWidth  = linesArray[i].size;
+					ctx.lineCap = "round";
+					ctx.strokeStyle = linesArray[i].color;
+					ctx.lineTo(linesArray[i].x, linesArray[i].y);
+					ctx.stroke();
+				}
+		}
+
 		// DRAWING EVENT HANDLERS
 
 		canvas.addEventListener('mousedown', function() {mousedown(canvas, event);});
@@ -110,7 +127,7 @@
 			canvas.style.zIndex = 8;
 			canvas.style.position = "absolute";
 			canvas.style.border = "1px solid";
-			ctx.fillStyle = "white";
+			ctx.fillStyle = currentBg;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			body.appendChild(canvas);
 		}
@@ -156,7 +173,7 @@
 
 		function eraser() {
 			currentSize = 50;
-			currentColor = canvas.style.background
+			currentColor = ctx.fillStyle
 		}
 
 		// GET MOUSE POSITION
