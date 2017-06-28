@@ -71,7 +71,10 @@
 
 		// BUTTON EVENT HANDLERS
 
-		document.getElementById('canvasUpdate').addEventListener('click', createCanvas);
+		document.getElementById('canvasUpdate').addEventListener('click', function() {
+			createCanvas();
+			redraw();
+		});
 		document.getElementById('colorpicker').addEventListener('change', function() {
 			currentColor = this.value;
 		});
