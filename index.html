@@ -47,6 +47,9 @@
 			<input type="button" value="Load" class="btn btn-warning" id="load">
 			<input type="button" value="Clear" class="btn btn-warning" id="clearCache">
 		</div>
+		<div class="extra">
+			<input type="button" value="SECRET" class="btn btn-warning" id="mona">
+		</div>
 		
 	</div>
 	<script>
@@ -58,6 +61,8 @@
 		var body = document.getElementsByTagName("body")[0];
 		var ctx = canvas.getContext('2d');
 		var linesArray = [];
+
+		// CHECKING FOR LOCALSTORAGE
 
 		if (localStorage.getItem("savedCanvas") !== null ) {
 			linesArray = JSON.parse(localStorage.savedCanvas);
@@ -77,6 +82,7 @@
 		document.getElementById('clear').addEventListener('click', createCanvas);
 		document.getElementById('save').addEventListener('click', save);
 		document.getElementById('load').addEventListener('click', load);
+		document.getElementById('mona').addEventListener('click', mona);
 		document.getElementById('clearCache').addEventListener('click', function() {
 			localStorage.removeItem("savedCanvas");
 			linesArray = [];
@@ -99,6 +105,16 @@
 			canvas.style.position = "absolute";
 			canvas.style.border = "1px solid";
 			body.appendChild(canvas);
+		}
+
+		function mona()
+		{
+			base_image = new Image();
+			canvas.width = 720;
+			base_image.src = 'mona.png';
+			base_image.onload = function(){
+				ctx.drawImage(base_image, 0, 0);
+			}
 		}
 
 		// SAVE FUNCTION
