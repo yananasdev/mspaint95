@@ -77,7 +77,11 @@
 		document.getElementById('clear').addEventListener('click', createCanvas);
 		document.getElementById('save').addEventListener('click', save);
 		document.getElementById('load').addEventListener('click', load);
-		document.getElementById('load').addEventListener('click', function() {localStorage.clear();});
+		document.getElementById('clearCache').addEventListener('click', function() {
+			localStorage.removeItem("savedCanvas");
+			linesArray = [];
+			console.log("Cache cleared!");
+		});
 
 		// DRAWING EVENT HANDLERS
 
@@ -109,14 +113,19 @@
 		function load() {
 			if (localStorage.getItem("savedCanvas") != null) {
 				var lines = JSON.parse(localStorage.getItem("savedCanvas"));
-				for (var i = 0; i < lines.length; i++) {
-					ctx.fillStyle = linesArray[i].color;
-					ctx.fillRect (linesArray[i].x, linesArray[i].y, linesArray[i].width, linesArray[i].height);
+				for (var i = 1; i < lines.length; i++) {
+					ctx.beginPath();
+					ctx.moveTo(linesArray[i-1].x, linesArray[i-1].y);
+					ctx.lineWidth  = linesArray[i].size;
+					ctx.lineCap = "round";
+					ctx.strokeStyle = linesArray[i].color;
+					ctx.lineTo(linesArray[i].x, linesArray[i].y);
+					ctx.stroke();
 				}
 				console.log("Canvas loaded.");
 			}
 			else {
-				console.log("nothing in memory!");
+				console.log("No canvas in memory!");
 			}
 		}
 
@@ -173,30 +182,35 @@
 
 		function mousedown(canvas, evt) {
 			var mousePos = getMousePos(canvas, evt);
-			console.log(mousePos);
 			isMouseDown=true
+			var currentPosition = getMousePos(canvas, evt);
+			ctx.moveTo(currentPosition.x, currentPosition.y)
+			ctx.beginPath();
+			ctx.lineWidth  = currentSize;
+			ctx.lineCap = "round";
+			ctx.strokeStyle = currentColor;
+
 		}
 
 		// ON MOUSE MOVE
 
 		function mousemove(canvas, evt) {
+
 			if(isMouseDown){
 				var currentPosition = getMousePos(canvas, evt);
-				ctx.fillStyle = currentColor;
-				ctx.fillRect ((currentPosition.x - currentSize/2), (currentPosition.y - currentSize/2), currentSize, currentSize);
-				store(currentPosition.x, currentPosition.y, currentSize, currentSize, currentColor);
-				console.log("X: " + currentPosition.x + " Y: "+ currentPosition.y);
+				ctx.lineTo(currentPosition.x, currentPosition.y)
+				ctx.stroke();
+				store(currentPosition.x, currentPosition.y, currentSize, currentColor);
 			}
 		}
 
-		// STORE DATE
+		// STORE DATA
 
-		function store(x, y, w, h, c) {
+		function store(x, y, s, c) {
 			var line = {
 				"x": x,
 				"y": y,
-				"width": w,
-				"height": h,
+				"size": s,
 				"color": c
 			}
 			linesArray.push(line);
@@ -206,6 +220,7 @@
 
 		function mouseup() {
 			isMouseDown=false
+			store()
 		}
 
 	</script>
@@ -233,7 +248,6 @@
 	}
 
 	canvas#canvas {
-		position: fixed;
 		left: 150px;
 		top: 45px;
 	}
