@@ -10,23 +10,22 @@
 	<div id="sidebar">
 		<div class="colorButtons">
 			<h3>Colour</h3>
-			<input type="color" value="" class="color" id="colorpicker">
-			<input type="button" color="rgb(255,255,00)" class="color btn btn-primary" style="background-color: yellow;" >
-			<input type="button" style="background-color: green;" color="rgb(128,255,0)" class="color btn btn-primary" >
-			<input type="button" style="background-color: cyan;" color="rgb(0,255,255)" class="color btn btn-primary" >
-			<input type="button" style="background-color: blue;" color="rgb(0,0,255)" class="color btn btn-primary" >
-			<input type="button" style="background-color: purple;" color="rgb(255,0,255)" class="color btn btn-primary" >
-			<input type="button" style="background-color: black;" color="rgb(0,0,0)" class="color btn btn-primary" >
+			<input type="color" id="colorpicker" value="#c81464" class="colorpicker">
+		</div>
+		<div class="colorButtons">
+			<h3>Bg Color</h3>
+			<input type="color" value="#ffffff" id="bgcolorpicker" class="colorpicker">
+		</div>
+
+		<div class="toolsButtons">
+			<h3>Tools</h3>
 			<button id="eraser" class="btn btn-default"><span class="glyphicon glyphicon-erase" aria-hidden="true"></span></button>
 			<button id="clear" class="btn btn-danger"> <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
 		</div>
 
 		<div class="buttonSize">
 			<h3>Size</h3>
-			<input type="button" value="normal" size="5" class="size btn btn-info">
-			<input type="button" value="medium" size="10" class="size btn btn-info">
-			<input type="button" value="large" size="25" class="size btn btn-info">
-			<input type="button" value="extra large" size="50" class="size btn btn-info">
+			<input type="range" min="1" max="50" value="1" step="1" id="controlSize">
 		</div>
 
 		<div class="canvasSize">
@@ -61,6 +60,9 @@
 		var body = document.getElementsByTagName("body")[0];
 		var ctx = canvas.getContext('2d');
 		var linesArray = [];
+		currentSize = 5;
+		var currentColor = "rgb(200,20,100)";
+
 
 		// CHECKING FOR LOCALSTORAGE
 
@@ -79,7 +81,16 @@
 
 		document.getElementById('canvasUpdate').addEventListener('click', createCanvas);
 		document.getElementById('colorpicker').addEventListener('mouseleave', function() {
-			colorpicker(this.value);
+			currentColor = this.value;
+		});
+
+		document.getElementById('bgcolorpicker').addEventListener('mouseleave', function() {
+			canvas.style.background = this.value;
+		});
+
+
+		document.getElementById('controlSize').addEventListener('mouseleave', function() {
+			currentSize = this.value;
 		});
 		document.getElementById('eraser').addEventListener('click', eraser);
 		document.getElementById('clear').addEventListener('click', createCanvas);
@@ -108,12 +119,6 @@
 			canvas.style.position = "absolute";
 			canvas.style.border = "1px solid";
 			body.appendChild(canvas);
-		}
-
-		// COLOR PICKER
-
-		function colorpicker(value) {
-			currentColor = value;
 		}
 
 		// MONA
@@ -156,43 +161,11 @@
 			}
 		}
 
-		// CHANGE SIZE
-
-		var currentSize = 5;
-
-		buttons = document.getElementsByClassName("size");
-		for (var i = 0; i < buttons.length; i++) {
-			button = buttons[i];
-			button.addEventListener("click", function() {
-				changeSize(this.getAttribute("size"));
-			})
-		}
-
-		function changeSize(value) {
-			currentSize = value;
-		}
-
 		// ERASER HANDLING
 
 		function eraser() {
 			currentSize = 50;
-			currentColor = "rgb(255,255,255)"
-		}
-
-		// CHANGE COLOR
-
-		var currentColor = "rgb(200,20,100)";
-
-		buttons = document.getElementsByClassName("color");
-		for (var i = 0; i < buttons.length; i++) {
-			button = buttons[i];
-			button.addEventListener("click", function() {
-				changeColor(this.getAttribute("color"));
-			})
-		}
-
-		function changeColor(value) {
-			currentColor = value;
+			currentColor = canvas.style.background
 		}
 
 		// GET MOUSE POSITION
@@ -259,7 +232,7 @@
 		}
 
 		canvas {
-			cursor: pointer;
+			cursor: crosshair;
 		}
 
 		div#sidebar {
@@ -288,7 +261,7 @@
 			margin-bottom: 10px;
 		}
 
-		.colorButtons .btn {
+		.toolsButtons .btn {
 			width: 48%;
 		}
 
@@ -296,9 +269,9 @@
 			width: 48%;
 		}
 
-		input#colorpicker {
-			border-radius: 5px;
+		.colorpicker {
 			background: transparent;
+			height: 40px;
 		}
 
 	</style>
