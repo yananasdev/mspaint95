@@ -1,5 +1,6 @@
 # mspaint95
-MsPaint inspired drawing canvas in VanillaJS.
+Canvas drawing in javascript, multiple functionalities. VanillaJS.
+
 
 ## Functionalities
 - Color change
