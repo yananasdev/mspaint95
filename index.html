@@ -28,7 +28,6 @@
 			<input type="button" value="extra large" size="50" class="size btn btn-info">
 		</div>
 
-
 		<div class="canvasSize">
 			<h3>Canvas</h3>
 			<div class="input-group">
@@ -240,54 +239,50 @@
 		}
 
 	</script>
+	<style>
 
-</script>
+		.colorButtons {
+			display: block;
+			margin: 20px 0;
+		}
 
+		canvas {
+			cursor: pointer;
+		}
 
-<style>
+		div#sidebar {
+			position: absolute;
+			left: 0;
+			width: 150px;
+			padding: 20px 20px;
+			top: 0;
+		}
 
-	.colorButtons {
-		display: block;
-		margin: 20px 0;
-	}
+		canvas#canvas {
+			left: 150px;
+			top: 45px;
+		}
 
-	canvas {
-		cursor: pointer;
-	}
+		.btn {
+			margin-bottom: 10px;
+			width: 100%;
+		}
+		input {
+			width: 100%;
+			margin-bottom: 10px;
+		}
 
-	div#sidebar {
-		position: absolute;
-		left: 0;
-		width: 150px;
-		padding: 20px 20px;
-		top: 0;
-	}
+		.input-group {
+			margin-bottom: 10px;
+		}
 
-	canvas#canvas {
-		left: 150px;
-		top: 45px;
-	}
+		.colorButtons .btn {
+			width: 48%;
+		}
 
-	.btn {
-		margin-bottom: 10px;
-		width: 100%;
-	}
-	input {
-		width: 100%;
-		margin-bottom: 10px;
-	}
-
-	.input-group {
-		margin-bottom: 10px;
-	}
-
-	.colorButtons .btn {
-		width: 48%;
-	}
-
-	.sizeButtons .btn {
-		width: 48%;
-	}
-	
-</style>
+		.sizeButtons .btn {
+			width: 48%;
+		}
+		
+	</style>
 </body>
